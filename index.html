@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes">
+  <title>The Innovators | Custom Circuits · IoT · Full-Stack</title>
+    <meta name="description" content="The Innovators is a multidisciplinary tech collective offering custom circuit design, PCB fabrication, IoT solutions, rapid prototyping, troubleshooting, and full-stack web & app development.">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: #0B0F1A;
+      font-family: 'Inter', sans-serif;
+      color: #EFF2F8;
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    :root {
+      --charcoal: #1A1F2C;
+      --deep-navy: #0E1320;
+      --electric-cyan: #00E5FF;
+      --cyan-glow: rgba(0, 229, 255, 0.3);
+      --glass-bg: rgba(16, 22, 34, 0.7);
+      --glass-border: rgba(0, 229, 255, 0.25);
+      --nav-height: 80px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0f17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--electric-cyan);
+      border-radius: 6px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 5vw, 2.5rem);
+    }
+
+    /* ========== NAVIGATION ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: rgba(8, 12, 20, 0.85);
+      border-bottom: 1px solid rgba(0, 229, 255, 0.28);
+      padding: 0;
+      height: auto;
+      min-height: 70px;
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      padding: 0.8rem 2rem;
+      position: relative;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      z-index: 101;
+    }
+    .logo i {
+      color: var(--electric-cyan);
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+    }
+    
+    /* Logo image */
+    .logo-img {
+      height: clamp(80px, 10vw, 210px);
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    /* Desktop navigation */
+    .nav-links {
+      display: flex;
+      gap: clamp(1rem, 3vw, 2.2rem);
+      font-weight: 500;
+      align-items: center;
+    }
+    .nav-links a {
+      transition: color 0.2s ease;
+      font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+      position: relative;
+      white-space: nowrap;
+    }
+    .nav-links a:hover {
+      color: var(--electric-cyan);
+    }
+    
+    /* Hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 102;
+      padding: 0;
+    }
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 2.5px;
+      background: #EFF2F8;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      transform-origin: left;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(0, -2px);
+      background: var(--electric-cyan);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(0, 2px);
+      background: var(--electric-cyan);
+    }
+
+    .quote-btn {
+      background: transparent;
+      border: 1.8px solid var(--electric-cyan);
+      color: var(--electric-cyan);
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: clamp(0.8rem, 1.4vw, 0.9rem);
+      transition: all 0.3s;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      z-index: 101;
+    }
+    .quote-btn:hover {
+      background: var(--electric-cyan);
+      color: #0B0F1A;
+      box-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    /* Mobile menu overlay */
+    .mobile-menu-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(8, 12, 20, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .mobile-menu-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .mobile-menu-overlay a {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #EFF2F8;
+      transition: color 0.2s;
+    }
+    .mobile-menu-overlay a:hover {
+      color: var(--electric-cyan);
+    }
+    .mobile-menu-overlay .quote-btn-mobile {
+      margin-top: 1rem;
+      background: var(--electric-cyan);
+      color: #0B0F1A;
+      border: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    /* ========== HERO with SLIDESHOW ========== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: #0a0e17;
+    }
+
+    .slideshow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center 30%;
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out;
+      filter: brightness(0.55) contrast(1.1) saturate(0.9);
+    }
+    .slide.active {
+      opacity: 1;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(0,229,255,0.12) 2px, transparent 2px);
+      background-size: 32px 32px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 800px;
+      padding: clamp(2rem, 8vh, 4rem) 0;
+    }
+    .hero-content h1 {
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #FFFFFF 65%, #00E5FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: clamp(0.8rem, 2vh, 1.5rem);
+      letter-spacing: -0.02em;
+    }
+    .hero-content p {
+      font-size: clamp(1rem, 2.2vw, 1.3rem);
+      color: #CDDAEE;
+      margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+      max-width: 620px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    .hero-cta {
+      display: flex;
+      gap: clamp(0.8rem, 2vw, 1.2rem);
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--electric-cyan);
+      color: #0B0F1A;
+      padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+      border-radius: 50px;
+      font-weight: 700;
+      transition: all 0.25s;
+      border: none;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      background: #00c8e8;
+      transform: translateY(-2px);
+      box-shadow: 0 0 22px var(--cyan-glow);
+    }
+    .btn-outline-light {
+      border: 1px solid rgba(0,229,255,0.65);
+      background: transparent;
+      padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+      border-radius: 50px;
+      font-weight: 500;
+      transition: all 0.25s;
+      font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+    }
+    .btn-outline-light:hover {
+      background: rgba(0,229,255,0.12);
+      border-color: var(--electric-cyan);
+    }
+
+    /* ========== SERVICES ========== */
+    .services {
+      padding: clamp(3rem, 8vw, 7rem) 0;
+      background: radial-gradient(ellipse at 20% 30%, #121826, #070b13);
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    .section-sub {
+      text-align: center;
+      color: #8E9DB5;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+      padding: 0 1rem;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(1.2rem, 3vw, 2.2rem);
+      margin-top: 1rem;
+      justify-content: center;
+    }
+    .service-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: clamp(24px, 4vw, 32px);
+      padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.2rem, 3vw, 2rem);
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .service-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0,229,255,0.7);
+      box-shadow: 0 28px 38px -18px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,229,255,0.25);
+      background: rgba(26, 34, 50, 0.8);
+    }
+    .card-icon {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: var(--electric-cyan);
+      margin-bottom: clamp(1rem, 2vw, 1.6rem);
+    }
+    .service-card h3 {
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+    .service-card p {
+      color: #C4D1E8;
+      font-size: clamp(0.85rem, 1.5vw, 0.98rem);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+    .card-tag {
+      font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--electric-cyan);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+      border-top: 1px dashed rgba(0,229,255,0.35);
+      padding-top: 1rem;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 130px;
+      height: 130px;
+      background: radial-gradient(circle, rgba(0,229,255,0.09) 0%, transparent 80%);
+      pointer-events: none;
+    }
+
+    /* ========== BLOG / INSIGHTS ========== */
+    .blog-section {
+      padding: clamp(3rem, 8vw, 6rem) 0;
+      background: #0F131E;
+      border-top: 1px solid rgba(0,229,255,0.15);
+      border-bottom: 1px solid rgba(0,229,255,0.12);
+    }
+    .blog-header {
+      text-align: center;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    }
+    /* Carousel Container */
+    .blog-carousel-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+    
+    .blog-grid {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 1rem 0;
+      cursor: grab;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE */
+    }
+    .blog-grid::-webkit-scrollbar {
+      display: none; /* Chrome/Safari */
+    }
+    .blog-grid.paused {
+      animation-play-state: paused;
+    }
+    .blog-grid.dragging {
+      cursor: grabbing;
+      scroll-behavior: auto;
+    }
+    
+    .blog-card {
+      background: rgba(18, 24, 36, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: clamp(20px, 3vw, 26px);
+      border: 1px solid #2A3348;
+      transition: 0.25s;
+      overflow: hidden;
+      flex: 0 0 320px;
+      min-width: 300px;
+    }
+    .blog-card:hover {
+      border-color: var(--electric-cyan);
+      transform: translateY(-6px);
+    }
+    
+    .blog-img {
+      height: clamp(180px, 32vw, 250px);
+      background-size: 100% auto;
+      background-position: top center;
+      background-repeat: no-repeat;
+      background-color: #0a0f17;
+    }
+    .blog-content {
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+    }
+    .blog-category {
+      font-size: clamp(0.65rem, 1vw, 0.7rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--electric-cyan);
+      margin-bottom: 0.6rem;
+    }
+    .blog-card h4 {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+    }
+    .blog-card p {
+      color: #B5C2DB;
+      font-size: clamp(0.8rem, 1.4vw, 0.92rem);
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+    }
+    .read-more {
+      color: var(--electric-cyan);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: clamp(0.8rem, 1.3vw, 0.9rem);
+    }
+
+    /* ========== CONTACT SECTION ========== */
+    .contact-section {
+      padding: clamp(3rem, 8vw, 6rem) 0;
+      background: #090d14;
+      border-top: 1px solid rgba(0,229,255,0.15);
+    }
+    .contact-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    }
+    .contact-info {
+      flex: 1 1 280px;
+      min-width: 250px;
+    }
+    .contact-info h3 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: 1.5rem;
+      color: white;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(1rem, 2.5vw, 1.8rem);
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: #CBD5E6;
+      word-break: break-word;
+    }
+    .contact-detail i {
+      font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+      color: var(--electric-cyan);
+      width: 2rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .contact-form {
+      flex: 1 1 320px;
+      min-width: 280px;
+      background: rgba(18, 24, 36, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: clamp(24px, 4vw, 32px);
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: #1A2132;
+      border: 1px solid #2E3B50;
+      border-radius: 16px;
+      padding: clamp(0.7rem, 1.5vw, 1rem) clamp(0.9rem, 2vw, 1.2rem);
+      margin-bottom: clamp(0.8rem, 1.5vw, 1.2rem);
+      color: white;
+      font-family: inherit;
+      font-size: clamp(0.85rem, 1.4vw, 0.95rem);
+      transition: border-color 0.2s;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--electric-cyan);
+    }
+    .contact-form button {
+      background: var(--electric-cyan);
+      border: none;
+      padding: clamp(0.7rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+      border-radius: 50px;
+      font-weight: 700;
+      color: #0B0F1A;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      font-size: clamp(0.9rem, 1.5vw, 1rem);
+      letter-spacing: 0.3px;
+    }
+    .contact-form button:hover {
+      background: #00c8e8;
+      box-shadow: 0 0 16px var(--cyan-glow);
+    }
+
+    /* ========== MODAL ========== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .modal-content {
+      background: #0F1420;
+      border: 1px solid var(--electric-cyan);
+      border-radius: clamp(24px, 4vw, 36px);
+      max-width: 500px;
+      width: 100%;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      position: relative;
+      box-shadow: 0 35px 50px rgba(0,0,0,0.6);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 {
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      margin-bottom: 0.8rem;
+    }
+    .modal-content input, 
+    .modal-content textarea {
+      width: 100%;
+      background: #1A2132;
+      border: 1px solid #2E3B50;
+      border-radius: 18px;
+      padding: clamp(0.7rem, 1.5vw, 1rem);
+      margin: 0.7rem 0;
+      color: white;
+      font-family: inherit;
+      font-size: clamp(0.85rem, 1.4vw, 0.95rem);
+    }
+    .modal-content input:focus,
+    .modal-content textarea:focus {
+      outline: none;
+      border-color: var(--electric-cyan);
+    }
+    .modal-content button {
+      background: var(--electric-cyan);
+      width: 100%;
+      border: none;
+      padding: clamp(0.8rem, 1.5vw, 1rem);
+      border-radius: 50px;
+      font-weight: 700;
+      margin-top: 1.2rem;
+      cursor: pointer;
+      color: #0B0F1A;
+      font-size: clamp(0.9rem, 1.5vw, 1rem);
+    }
+    .close-modal {
+      position: absolute;
+      top: 0.8rem;
+      right: 1.2rem;
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      cursor: pointer;
+      color: #b0c7dd;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .close-modal:hover {
+      color: var(--electric-cyan);
+    }
+    
+    /* Footer */
+    footer {
+      padding: clamp(1.8rem, 4vw, 3rem) 0;
+      text-align: center;
+      font-size: clamp(0.7rem, 1.3vw, 0.85rem);
+      color: #7A89A3;
+      background: #04070C;
+      border-top: 1px solid #1a2332;
+    }
+    footer p {
+      padding: 0 1rem;
+    }
+
+    /* ========== RESPONSIVE BREAKPOINTS ========== */
+    @media (max-width: 1024px) {
+      .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+      .blog-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0.8rem 1.5rem;
+      }
+      
+      /* Hide desktop nav links, show hamburger */
+      .nav-links {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+      
+      /* Adjust quote button */
+      .quote-btn.desktop-only {
+        display: none;
+      }
+      
+      .hero {
+        min-height: 85vh;
+        min-height: 85dvh;
+        text-align: left;
+      }
+      .hero-content {
+        padding: 3rem 0;
+      }
+      .hero-cta {
+        flex-direction: column;
+        width: 100%;
+      }
+      .hero-cta .btn-primary,
+      .hero-cta .btn-outline-light {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .blog-grid {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .contact-wrapper {
+        flex-direction: row;       
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+      .contact-info, 
+      .contact-form {
+        flex: 1 1 45%;            
+        min-width: 250px;
+      }
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+      }
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.2rem;         
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container {
+        padding: 0.7rem 1rem;
+      }
+      .logo span {
+        font-size: clamp(1rem, 4vw, 1.2rem);
+      }
+      .container {
+        padding: 0 1rem;
+      }
+      .hero-content h1 {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+      }
+      .hero-content p {
+        font-size: clamp(0.9rem, 3.5vw, 1rem);
+      }
+      .section-title {
+        font-size: clamp(1.5rem, 7vw, 2rem);
+      }
+      .service-card {
+        padding: 1.5rem;
+      }
+      .modal-content {
+        margin: 0.5rem;
+        padding: 1.5rem;
+      }
+      .services-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+      .contact-wrapper {
+        flex-direction: column !important;
+        align-items: center;
+      }
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        max-width: 350px;
+      }
+      .contact-form {
+        width: 100%;
+        max-width: 350px;
+      }
+    }
+
+    /* Prevent body scroll when mobile menu is open */
+    body.no-scroll {
+      overflow: hidden;
+    }
+    
+    /* Screen Reader Only - Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <img src="innovators.webp" alt="The Innovators Lab" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+        <i class="fas fa-microchip" style="display:none;"></i>
+        <span>THE INNOVATORS<span style="color: #00E5FF; font-weight: 300;">&nbsp;LAB</span></span>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <div class="nav-links" id="desktopNavLinks">
+        <a href="#">Home</a>
+        <a href="#services">Services</a>
+        <a href="#insights">Insights</a>
+        <a href="#contact">Contact</a>
+      </div>
+            
+      <!-- Hamburger Menu Button -->
+      <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <a href="#" data-close="true">Home</a>
+    <a href="#services" data-close="true">Services</a>
+    <a href="#insights" data-close="true">Insights</a>
+    <a href="#contact" data-close="true">Contact</a>
+  </div>
+
+  <!-- HERO with background slideshow -->
+<main id="main-content"></main>
+  <section class="hero">
+    <div class="slideshow" id="heroSlideshow">
+      <!-- Dynamic slides from slides.csv will load here -->
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <h1>Hardware meets software.<br>Ideas become reality.</h1>
+      <p>We are a multidisciplinary tech collective bridging circuit fabrication, IoT intelligence, and full‑stack platforms.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" id="heroQuoteBtn">Start Your Project</button>
+        <a href="#services" class="btn-outline-light">Explore Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section id="services" class="services">
+    <div class="container">
+      <div class="section-title">Engineering <span style="color: #00E5FF;">Services</span></div>
+      <div class="section-sub">From PCB fabrication to cloud‑integrated applications — we execute end‑to‑end.</div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="card-icon"><i class="fas fa-microchip"></i></div>
+          <h3>Custom Circuit Design & PCB Fabrication</h3>
+          <p>We design and build custom circuit boards from scratch. We take your electronic ideas and turn them into professional, physical boards ready for use.</p>
+          <div class="card-tag"><i class="fas fa-code-branch"></i> Schematic to Gerber</div>
+        </div>
+        <div class="service-card">
+          <div class="card-icon"><i class="fas fa-cube"></i></div>
+          <h3>Rapid Prototype Development</h3>
+          <p>We help you turn an idea into a working model quickly. This allows you to test your concept and see it in action without long waiting times.</p>
+          <div class="card-tag"><i class="fas fa-3d-rotating"></i> Functional models</div>
+        </div>
+        <div class="service-card">
+          <div class="card-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+          <h3>Troubleshooting & Repair</h3>
+          <p>If your electronics or software aren't working, we find the problem and fix it. We handle everything from broken hardware to coding errors to get your systems running again.</p>
+          <div class="card-tag"><i class="fas fa-microscope"></i> Diagnostics & rework</div>
+        </div>
+        <div class="service-card">
+          <div class="card-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+          <h3>IoT & Smart Solutions</h3>
+          <p>We bring intelligence to everyday objects. By integrating sensors, actuators, and connectivity, we build smart ecosystems that allow hardware to communicate seamlessly with the digital world.</p>
+          <div class="card-tag"><i class="fas fa-wifi"></i> MQTT · HTTPS</div>
+        </div>
+        <div class="service-card">
+          <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+          <h3>Full-Stack Development (Web & App)</h3>
+          <p>Our software team crafts intuitive user interfaces and robust backends. Whether you need a web-based dashboard to monitor your IoT devices or a standalone mobile application, we build scalable platforms tailored to your needs.</p>
+          <div class="card-tag"><i class="fas fa-code"></i> ·JS · PHP · FLUTTER, ·MYSQL · FIREBASE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH INSIGHTS SECTION -->
+  <section id="insights" class="blog-section">
+    <div class="container">
+      <div class="blog-header">
+        <div class="section-title" style="font-size: clamp(1.8rem, 4vw, 2.4rem);">Tech <span style="color: #00E5FF;">Insights</span></div>
+        <div class="section-sub">Deep dives for hardware architects and firmware engineers</div>
+      <div class="blog-carousel-wrapper">
+        <div class="blog-grid" id="insightsGrid">
+          <!-- Dynamic insights from CSV will load here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-title">Get in <span style="color: #00E5FF;">Touch</span></div>
+      <div class="section-sub">Let's discuss your next hardware or software project</div>
+      <div class="contact-wrapper">
+        <div class="contact-info">
+          <h2 style="font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 1.5rem; color: white;">Contact details</h2>
+          <div class="contact-detail">
+            <i class="fab fa-facebook"></i>
+            <a href="https://www.facebook.com/share/18ZQFtNG8N/" target="_blank" style="color: #CBD5E6; transition: color 0.2s;" onmouseover="this.style.color='#00E5FF'" onmouseout="this.style.color='#CBD5E6'">The Innovators</a>
+          </div>
+          <div class="contact-detail">
+            <i class="fas fa-phone-alt"></i>
+            <a href="tel:+639563572250" style="color: #CBD5E6; transition: color 0.2s;" onmouseover="this.style.color='#00E5FF'" onmouseout="this.style.color='#CBD5E6'">+639563572250</a>
+          </div>
+          <div class="contact-detail">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:hello@theinnovators.tech" style="color: #CBD5E6; transition: color 0.2s;" onmouseover="this.style.color='#00E5FF'" onmouseout="this.style.color='#CBD5E6'">hello@theinnovators.tech</a>
+          </div>
+          <div class="contact-detail">
+            <i class="fas fa-map-marker-alt"></i>
+            <a href="https://www.google.com/maps/place/Golden+Country+Homes+Subdivision/@13.7855696,121.064442,16.27z/data=!4m6!3m5!1s0x33bd0f2a86d87b97:0x300f1e2a7af8c89d!8m2!3d13.786525!4d121.069312!16s%2Fg%2F11g4hc05dn?entry=ttu&g_ep=EgoyMDI2MDQyMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" style="color: #CBD5E6; transition: color 0.2s;" onmouseover="this.style.color='#00E5FF'" onmouseout="this.style.color='#CBD5E6'">Innovators Manufacturing</a>
+          </div>
+        </div>
+          <form class="contact-form" id="contactForm" action="https://script.google.com/macros/s/AKfycbxCSk6ji3q-uWbPDk95HFXBkh654H1xNyY63AnbA0riTwfd_G_uRpc9-hJxTDOi7rVYtQ/exec" method="POST">
+          <input type="text" name="website" id="websiteField" style="position: absolute; left: -9999px; opacity: 0; height: 0; width: 0;" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label for="contactName" class="sr-only">Your Name</label>
+          <input type="text" name="name" placeholder="Your Name" id="contactName" required aria-label="Your Name">
+          <label for="contactEmail" class="sr-only">Email Address</label>
+          <input type="email" name="email" placeholder="Email Address" id="contactEmail" required aria-label="Email Address">
+          <label for="contactMessage" class="sr-only">Your Message</label>
+          <textarea rows="4" name="message" placeholder="How can we help you?" id="contactMessage" aria-label="Your Message"></textarea>
+          <button type="submit">Send Message <i class="fas fa-paper-plane"></i></button>
+          <p id="contactFeedback" style="margin-top: 1rem; font-size: 0.85rem; color: #00E5FF;"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+  <footer>
+    <div class="container">
+      <p> 2026 THE INNOVATORS </p>
+      <p style="margin-top: 0.7rem;">© All Rights</p>
+    </div>
+  </footer>
+
+  <!-- Article Read More Modal -->
+  <div id="articleModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="closeArticleModal">&times;</span>
+      <div class="blog-category" id="articleCategory"></div>
+      <h2 id="articleTitle" style="font-size: clamp(1.4rem, 3vw, 1.9rem); margin-bottom: 0.8rem; color: white;"></h2>
+      <div class="blog-img" id="articleImage" style="height: 200px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 1rem;"></div>
+      <p id="articleFullText" style="color: #CBD5E6; line-height: 1.7; font-size: 0.95rem;"></p>
+      <button id="closeArticleBtn" style="background: var(--electric-cyan); border: none; padding: 0.8rem; border-radius: 50px; font-weight: 700; color: #0B0F1A; cursor: pointer; width: 100%; margin-top: 1rem;">Close</button>
+    </div>
+  </div>
+
+<!-- Quote Modal -->
+<div id="quoteModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" id="closeModalBtn">&times;</span>
+    <h2 style="font-size: clamp(1.4rem, 3vw, 1.9rem); margin-bottom: 0.8rem;"><i class="fas fa-microchip"></i> Request a Quote</h2>
+    <p style="margin-bottom: 1rem; color: #bcc9e0;">Describe your project — custom PCB, IoT system, or full‑stack app.</p>
+    <label for="quoteName" class="sr-only">Full Name</label>
+    <input type="text" name="quoteName" placeholder="Full Name" id="quoteName" aria-label="Full Name">
+    <label for="quoteEmail" class="sr-only">Email Address</label>
+    <input type="email" name="quoteEmail" placeholder="Email Address" id="quoteEmail" aria-label="Email Address">
+    <label for="quoteMsg" class="sr-only">Project Details</label>
+    <textarea rows="4" name="quoteMsg" placeholder="Tell us about your hardware / software requirements..." id="quoteMsg" aria-label="Project Details"></textarea>
+    <!-- Honeypot -->
+    <input type="text" name="website" id="quoteWebsite" style="position: absolute; left: -9999px; opacity: 0; height: 0; width: 0;" tabindex="-1" autocomplete="off">
+    <button id="submitQuoteBtn">Send Request <i class="fas fa-paper-plane"></i></button>
+    <p id="formFeedback" style="font-size:0.85rem; margin-top: 1rem; color: #00E5FF;"></p>
+  </div>
+</div>
+
+  <script>
+    (function() {
+      // ========== SECURITY FUNCTIONS ==========
+      function sanitizeInput(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      function containsURL(str) {
+        const urlPattern = /https?:\/\/|www\.|\[url\]|\[link\]/gi;
+        return urlPattern.test(str);
+      }
+
+      function isObviousBot(message) {
+        const spamWords = ['buy now', 'click here', 'free money', 'casino', 'seo services', 'cheap pills', 'earn money'];
+        const lowerMsg = message.toLowerCase();
+        return spamWords.some(word => lowerMsg.includes(word));
+      }
+
+      // ---------- MOBILE MENU TOGGLE ----------
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+      const body = document.body;
+      
+      function openMobileMenu() {
+        mobileMenuOverlay.classList.add('active');
+        hamburgerBtn.classList.add('active');
+        body.classList.add('no-scroll');
+      }
+      
+      function closeMobileMenu() {
+        mobileMenuOverlay.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
+        body.classList.remove('no-scroll');
+      }
+      
+      hamburgerBtn.addEventListener('click', () => {
+        if (mobileMenuOverlay.classList.contains('active')) {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      });
+      
+      // Close mobile menu when clicking menu items
+      mobileMenuOverlay.querySelectorAll('[data-close="true"]').forEach(item => {
+        item.addEventListener('click', () => {
+          closeMobileMenu();
+        });
+      });
+      
+      // Close mobile menu on window resize (if desktop)
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && mobileMenuOverlay.classList.contains('active')) {
+          closeMobileMenu();
+        }
+      });
+
+      // ---------- SLIDESHOW FROM CSV ----------
+      async function loadSlideshow() {
+        const slideshow = document.getElementById('heroSlideshow');
+        
+        try {
+          const response = await fetch('slides.csv');
+          const csvText = await response.text();
+          
+          const rows = csvText.split('\n').filter(row => row.trim());
+          const imageRows = rows.slice(1); // Skip header "image"
+          
+          if (imageRows.length > 0) {
+            slideshow.innerHTML = imageRows.map((image, index) => `
+              <div class="slide ${index === 0 ? 'active' : ''}" style="background-image: url('${image.trim()}');"></div>
+            `).join('');
+          } else {
+            // Fallback
+            slideshow.innerHTML = `
+              <div class="slide active" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+            `;
+          }
+          
+          // Start slideshow after loading
+          startSlideshow();
+          
+        } catch (error) {
+          // Fallback kung walang CSV
+          slideshow.innerHTML = `
+            <div class="slide active" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+            <div class="slide" style="background-image: url('https://images.pexels.com/photos/1677011/pexels-photo-1677011.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+            <div class="slide" style="background-image: url('https://images.pexels.com/photos/14462866/pexels-photo-14462866.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+          `;
+          startSlideshow();
+        }
+      }
+      
+      function startSlideshow() {
+        const slides = document.querySelectorAll('#heroSlideshow .slide');
+        if (slides.length === 0) return;
+        
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        
+        function showSlide(index) {
+          slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) slide.classList.add('active');
+          });
+        }
+        
+        function nextSlide() {
+          currentSlide = (currentSlide + 1) % totalSlides;
+          showSlide(currentSlide);
+        }
+        
+        setInterval(nextSlide, 4500);
+        showSlide(0);
+      }
+      
+      // Load slideshow on page load
+      loadSlideshow();
+
+      // ---------- QUOTE MODAL LOGIC ----------
+      const modal = document.getElementById('quoteModal');
+      const openBtns = [
+        document.getElementById('heroQuoteBtn')
+      ];
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const submitQuoteBtn = document.getElementById('submitQuoteBtn');
+      const quoteFeedback = document.getElementById('formFeedback');
+      
+      function openModal() {
+        if (modal) {
+          modal.style.display = 'flex';
+          body.classList.add('no-scroll');
+        }
+      }
+      function closeModal() {
+        if (modal) {
+          modal.style.display = 'none';
+          if (quoteFeedback) quoteFeedback.innerText = '';
+          body.classList.remove('no-scroll');
+        }
+      }
+      
+      openBtns.forEach(btn => {
+        if (btn) btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Close mobile menu if open
+          if (mobileMenuOverlay.classList.contains('active')) {
+            closeMobileMenu();
+          }
+          openModal();
+        });
+      });
+      
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+          closeModal();
+        }
+      });
+      
+      if (submitQuoteBtn) {
+        // Rate limiting for Quote Modal
+        const QUOTE_COOLDOWN_SECONDS = 300;
+        let lastQuoteSubmitTime = 0;
+        
+        submitQuoteBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          
+          // === HONEYPOT CHECK ===
+          const quoteWebsite = document.getElementById('quoteWebsite');
+          if (quoteWebsite && quoteWebsite.value.trim() !== '') {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '✓ Quote request sent! Our team will respond within 24h.';
+              quoteFeedback.style.color = '#00E5FF';
+            }
+            document.getElementById('quoteName').value = '';
+            document.getElementById('quoteEmail').value = '';
+            document.getElementById('quoteMsg').value = '';
+            setTimeout(() => closeModal(), 2000);
+            return;
+          }
+          
+          // === RATE LIMIT CHECK ===
+          const now = Date.now();
+          const timeSinceLastSubmit = (now - lastQuoteSubmitTime) / 1000;
+          
+          if (timeSinceLastSubmit < QUOTE_COOLDOWN_SECONDS) {
+            const waitTime = Math.ceil(QUOTE_COOLDOWN_SECONDS - timeSinceLastSubmit);
+            if (quoteFeedback) {
+              quoteFeedback.innerText = `⏳ Please wait ${waitTime} seconds before sending again.`;
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          const name = sanitizeInput(document.getElementById('quoteName')?.value.trim());
+          const email = sanitizeInput(document.getElementById('quoteEmail')?.value.trim());
+          const message = sanitizeInput(document.getElementById('quoteMsg')?.value.trim());
+          
+          if (!name || !email) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Please provide name and email.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          if (!email.includes('@')) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Enter a valid email address.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === MESSAGE LENGTH CHECK ===
+          if (message.length < 10) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Message must be at least 10 characters.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === MAX LENGTH CHECK ===
+          if (message.length > 2000) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Message must be under 2000 characters.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === URL BLOCK ===
+          if (containsURL(message)) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Links are not allowed in messages.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === SPAM BOT CHECK ===
+          if (isObviousBot(message)) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '✓ Quote request sent! Our team will respond within 24h.';
+              quoteFeedback.style.color = '#00E5FF';
+            }
+            document.getElementById('quoteName').value = '';
+            document.getElementById('quoteEmail').value = '';
+            document.getElementById('quoteMsg').value = '';
+            setTimeout(() => closeModal(), 2000);
+            return;
+          }
+          
+          // Show loading
+          if (quoteFeedback) {
+            quoteFeedback.innerText = '⏳ Sending...';
+            quoteFeedback.style.color = '#00E5FF';
+          }
+          
+          try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('message', '[QUOTE REQUEST] ' + message);
+            
+            const googleScriptURL = "https://script.google.com/macros/s/AKfycbxCSk6ji3q-uWbPDk95HFXBkh654H1xNyY63AnbA0riTwfd_G_uRpc9-hJxTDOi7rVYtQ/exec";
+            
+            await fetch(googleScriptURL, {
+              method: 'POST',
+              body: formData,
+              mode: 'no-cors'
+            });
+            
+            // Update last submit time
+            lastQuoteSubmitTime = Date.now();
+            
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '✓ Quote request sent! Our team will respond within 24h.';
+              quoteFeedback.style.color = '#00E5FF';
+            }
+            
+            document.getElementById('quoteName').value = '';
+            document.getElementById('quoteEmail').value = '';
+            document.getElementById('quoteMsg').value = '';
+            
+            setTimeout(() => closeModal(), 2000);
+            
+          } catch (error) {
+            if (quoteFeedback) {
+              quoteFeedback.innerText = '❌ Failed to send. Please try again.';
+              quoteFeedback.style.color = '#ff8a7a';
+            }
+          }
+        });
+      }
+            // ---------- ARTICLE MODAL FUNCTION ----------
+      window.openArticleModal = function(card) {
+        const title = card.getAttribute('data-title');
+        const description = card.getAttribute('data-description');
+        const image = card.getAttribute('data-image');
+        const category = card.getAttribute('data-category');
+        const icon = card.getAttribute('data-icon');
+        
+        document.getElementById('articleCategory').innerHTML = `<i class="fas ${icon}"></i> ${category}`;
+        document.getElementById('articleTitle').textContent = title;
+        document.getElementById('articleFullText').textContent = description;
+        document.getElementById('articleImage').style.backgroundImage = `url('${image || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}')`;
+        
+        document.getElementById('articleModal').style.display = 'flex';
+        body.classList.add('no-scroll');
+      };
+      
+      // Close article modal
+      document.getElementById('closeArticleModal').addEventListener('click', () => {
+        document.getElementById('articleModal').style.display = 'none';
+        body.classList.remove('no-scroll');
+      });
+      
+      document.getElementById('closeArticleBtn').addEventListener('click', () => {
+        document.getElementById('articleModal').style.display = 'none';
+        body.classList.remove('no-scroll');
+      });
+      
+      // Close when clicking outside
+      window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('articleModal')) {
+          document.getElementById('articleModal').style.display = 'none';
+          body.classList.remove('no-scroll');
+        }
+      });
+
+      // ---------- INSIGHTS CAROUSEL LOADER ----------
+      let autoScrollInterval;
+      let isPaused = false;
+      
+      async function loadInsights() {
+        const grid = document.getElementById('insightsGrid');
+        
+        const icons = {
+          'PCB Design': 'fa-pcb',
+          'Firmware': 'fa-microcontroller',
+          'IoT Edge': 'fa-cloud',
+          'Embedded': 'fa-microchip',
+          'Web Dev': 'fa-code',
+          'AI/ML': 'fa-brain'
+        };
+        
+        try {
+          const response = await fetch('insights.csv');
+          const csvText = await response.text();
+          
+          const rows = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let char of csvText) {
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === '\n' && !inQuotes) {
+              rows.push(current);
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          if (current) rows.push(current);
+          
+          const dataRows = rows.slice(1).filter(row => row.trim());
+          
+          // Duplicate for infinite scroll effect
+          const allRows = [...dataRows, ...dataRows];
+          
+          grid.innerHTML = allRows.map(row => {
+            const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+            const [title, description, image, category] = cols;
+            const icon = icons[category] || 'fa-code';
+            
+            return `
+              <div class="blog-card" data-title="${title || 'Untitled'}" data-description="${description || ''}" data-image="${image || ''}" data-category="${category || 'Tech'}" data-icon="${icon}" onclick="openArticleModal(this)">
+                <div class="blog-img" style="background-image: url('${image || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}');"></div>
+                <div class="blog-content">
+                  <div class="blog-category"><i class="fas ${icon}"></i> ${category || 'Tech'}</div>
+                  <h4>${title || 'Untitled'}</h4>
+                  <p>${(description || '').substring(0, 80)}...</p>
+                  <span class="read-more" style="cursor:pointer;">Read more <i class="fas fa-arrow-right"></i></span>
+                </div>
+              </div>
+            `;
+          }).join('');
+          
+          // Start auto-scroll
+          startAutoScroll(grid);
+          setupCarouselControls(grid);
+          
+        } catch (error) {
+          grid.innerHTML = `
+            <div class="blog-card">
+              <div class="blog-img" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg');"></div>
+              <div class="blog-content">
+                <div class="blog-category"><i class="fas fa-cloud"></i> Getting Started</div>
+                <h4>Create your insights.csv file</h4>
+                <p>Place a CSV file with columns: title, description, image, category in the same folder.</p>
+                <a href="#" class="read-more">Learn how <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          `;
+        }
+      }
+      
+      function startAutoScroll(grid) {
+        let scrollSpeed = 2;
+        
+        autoScrollInterval = setInterval(() => {
+          if (!isPaused) {
+            grid.scrollLeft += scrollSpeed;
+            
+            if (grid.scrollLeft >= grid.scrollWidth / 2) {
+              grid.scrollLeft = 0;
+            }
+          }
+        }, 30);
+      }
+    
+      function setupCarouselControls(grid) {
+        // === DESKTOP EVENTS ===
+        grid.addEventListener('mouseenter', () => {
+          isPaused = true;
+        });
+        grid.addEventListener('mouseleave', () => {
+          isPaused = false;
+        });
+        
+        let isDragging = false;
+        let startX, scrollLeftPos;
+        
+        grid.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          grid.classList.add('dragging');
+          startX = e.pageX - grid.offsetLeft;
+          scrollLeftPos = grid.scrollLeft;
+          isPaused = true;
+        });
+        
+        grid.addEventListener('mouseleave', () => {
+          isDragging = false;
+          grid.classList.remove('dragging');
+          isPaused = false;
+        });
+        
+        grid.addEventListener('mouseup', () => {
+          isDragging = false;
+          grid.classList.remove('dragging');
+          isPaused = false;
+        });
+        
+        grid.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const x = e.pageX - grid.offsetLeft;
+          const walk = (x - startX) * 2;
+          grid.scrollLeft = scrollLeftPos - walk;
+        });
+
+        // === MOBILE TOUCH EVENTS ===
+        grid.addEventListener('touchstart', (e) => {
+          isDragging = true;
+          grid.classList.add('dragging');
+          startX = e.touches[0].pageX - grid.offsetLeft;
+          scrollLeftPos = grid.scrollLeft;
+          isPaused = true;
+        });
+        
+        grid.addEventListener('touchend', () => {
+          isDragging = false;
+          grid.classList.remove('dragging');
+          // Auto-resume after 1.5 seconds
+          setTimeout(() => {
+            isPaused = false;
+          }, 1500);
+        });
+        
+        grid.addEventListener('touchmove', (e) => {
+          if (!isDragging) return;
+          const x = e.touches[0].pageX - grid.offsetLeft;
+          const walk = (x - startX) * 2;
+          grid.scrollLeft = scrollLeftPos - walk;
+        });
+      }
+      // Load on page load
+      loadInsights();
+      
+      // ---------- CONTACT FORM LOGIC (Google Sheets) with Anti-Spam ----------
+      const contactForm = document.getElementById('contactForm');
+      const contactFeedback = document.getElementById('contactFeedback');
+      
+      // Rate limiting: 1 message per 60 seconds
+      const COOLDOWN_SECONDS = 300;
+      let lastSubmitTime = 0;
+      
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          // === HONEYPOT CHECK ===
+          const websiteField = document.getElementById('websiteField');
+          if (websiteField && websiteField.value.trim() !== '') {
+            // Bot detected! Fake success message
+            if (contactFeedback) {
+              contactFeedback.innerText = '✓ Message sent! We\'ll get back to you soon.';
+              contactFeedback.style.color = '#00E5FF';
+            }
+            contactForm.reset();
+            return;
+          }
+          
+          // === RATE LIMIT CHECK ===
+          const now = Date.now();
+          const timeSinceLastSubmit = (now - lastSubmitTime) / 1000;
+          
+          if (timeSinceLastSubmit < COOLDOWN_SECONDS) {
+            const waitTime = Math.ceil(COOLDOWN_SECONDS - timeSinceLastSubmit);
+            if (contactFeedback) {
+              contactFeedback.innerText = `⏳ Please wait ${waitTime} seconds before sending again.`;
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          const cName = sanitizeInput(document.getElementById('contactName')?.value.trim());
+          const cEmail = sanitizeInput(document.getElementById('contactEmail')?.value.trim());
+          const cMessage = sanitizeInput(document.getElementById('contactMessage')?.value.trim());
+          
+          if (!cName || !cEmail) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Please fill in name and email.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          if (!cEmail.includes('@')) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Enter a valid email.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // Message length check
+          if (cMessage.length < 10) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Message must be at least 10 characters.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === MAX LENGTH CHECK ===
+          if (cMessage.length > 2000) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Message must be under 2000 characters.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === URL BLOCK ===
+          if (containsURL(cMessage)) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Links are not allowed in messages.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+            return;
+          }
+          
+          // === SPAM BOT CHECK ===
+          if (isObviousBot(cMessage)) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '✓ Message sent! We\'ll get back to you soon.';
+              contactFeedback.style.color = '#00E5FF';
+            }
+            contactForm.reset();
+            return;
+          }
+          
+          // Show loading
+          if (contactFeedback) {
+            contactFeedback.innerText = '⏳ Sending...';
+            contactFeedback.style.color = '#00E5FF';
+          }
+          
+          try {
+            const formData = new FormData();
+            formData.append('name', cName);
+            formData.append('email', cEmail);
+            formData.append('message', cMessage);
+            
+            await fetch(contactForm.action, {
+              method: 'POST',
+              body: formData,
+              mode: 'no-cors'
+            });
+            
+            // Update last submit time
+            lastSubmitTime = Date.now();
+            
+            if (contactFeedback) {
+              contactFeedback.innerText = '✓ Message sent! We\'ll get back to you soon.';
+              contactFeedback.style.color = '#00E5FF';
+            }
+            contactForm.reset();
+            
+            // Reset feedback after 5 seconds
+            setTimeout(() => {
+              if (contactFeedback) {
+                contactFeedback.innerText = '';
+              }
+            }, 5000);
+            
+          } catch (error) {
+            if (contactFeedback) {
+              contactFeedback.innerText = '❌ Failed to send. Please try again.';
+              contactFeedback.style.color = '#ff8a7a';
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
