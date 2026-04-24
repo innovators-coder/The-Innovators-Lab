@@ -1022,125 +1022,96 @@
 
 <!-- ANTI-INSPECT SCRIPT - Add this first -->
 <script>
-    // ========== ANTI-INSPECT / ANTI-DEVELOPER TOOLS ==========
+<!-- ANTI-INSPECT SCRIPT - Mobile Friendly Version -->
+<script>
+    // ========== ANTI-INSPECT / ANTI-DEVELOPER TOOLS (Mobile-Friendly) ==========
     (function() {
-        // 1. DISABLE RIGHT CLICK (Context Menu)
+        // Check if mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // 1. DISABLE RIGHT CLICK (Context Menu) - except on form inputs
         document.addEventListener('contextmenu', function(e) {
+            // Allow right-click on inputs, textareas, and contact forms
+            if (e.target.closest('input, textarea, .contact-form, .modal-content')) {
+                return true;
+            }
             e.preventDefault();
             return false;
         });
         
-        // 2. DISABLE KEYBOARD SHORTCUTS FOR DEV TOOLS
-        document.addEventListener('keydown', function(e) {
-            // F12 key
-            if (e.key === 'F12') {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+I (Windows/Linux)
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+J (Windows/Linux)
-            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+C (Windows/Linux)
-            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+U (View Source)
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+U
-            if (e.ctrlKey && e.shiftKey && e.key === 'U') {
-                e.preventDefault();
-                return false;
-            }
-            // Command+Option+I (Mac)
-            if (e.metaKey && e.altKey && e.key === 'I') {
-                e.preventDefault();
-                return false;
-            }
-            // Command+Option+J (Mac)
-            if (e.metaKey && e.altKey && e.key === 'J') {
-                e.preventDefault();
-                return false;
-            }
-            // Command+Option+C (Mac)
-            if (e.metaKey && e.altKey && e.key === 'C') {
-                e.preventDefault();
-                return false;
-            }
-            // Command+U (Mac View Source)
-            if (e.metaKey && e.key === 'u') {
-                e.preventDefault();
-                return false;
-            }
-        });
+        // 2. DISABLE KEYBOARD SHORTCUTS FOR DEV TOOLS (Desktop only)
+        if (!isMobile) {
+            document.addEventListener('keydown', function(e) {
+                const devToolKeys = ['F12', 'I', 'J', 'C', 'U'];
+                const isDevTool = (
+                    e.key === 'F12' ||
+                    (e.ctrlKey && e.shiftKey && devToolKeys.includes(e.key)) ||
+                    (e.ctrlKey && e.key === 'u') ||
+                    (e.metaKey && e.altKey && devToolKeys.includes(e.key))
+                );
+                
+                if (isDevTool) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
         
-        // 3. DETECT DEV TOOLS OPENING (Console)
+        // 3. DETECT DEV TOOLS OPENING - MODIFIED FOR MOBILE
         let devToolsOpen = false;
+        let warningShown = false;
+        
         const checkDevTools = function() {
-            const threshold = 160;
-            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+            // Skip detection on mobile devices to prevent false positives
+            if (isMobile) {
+                return;
+            }
+            
+            const threshold = 200; // Increased threshold for better accuracy
+            const widthThreshold = Math.abs(window.outerWidth - window.innerWidth) > threshold;
+            const heightThreshold = Math.abs(window.outerHeight - window.innerHeight) > threshold;
             
             if (widthThreshold || heightThreshold) {
-                if (!devToolsOpen) {
+                if (!devToolsOpen && !warningShown) {
                     devToolsOpen = true;
-                    // Optional: Redirect or show warning
-                    document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0B0F1A;color:#00E5FF;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99999;font-family:monospace;"><h1>🚫 Access Denied</h1><p>Developer tools detected. Please close them to continue.</p></div>';
+                    warningShown = true;
+                    // Show warning message instead of replacing entire page
+                    showWarningMessage();
                 }
             } else {
                 devToolsOpen = false;
+                // Remove warning if it exists and dev tools are closed
+                const warningDiv = document.getElementById('devToolsWarning');
+                if (warningDiv) {
+                    warningDiv.remove();
+                    warningShown = false;
+                }
             }
         };
         
-        // Check every 2 seconds
-        setInterval(checkDevTools, 2000);
+        function showWarningMessage() {
+            // Remove existing warning if any
+            const existingWarning = document.getElementById('devToolsWarning');
+            if (existingWarning) existingWarning.remove();
+            
+            // Create warning overlay
+            const warningDiv = document.createElement('div');
+            warningDiv.id = 'devToolsWarning';
+            warningDiv.innerHTML = `
+                <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,15,26,0.95);color:#00E5FF;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99999;font-family:monospace;backdrop-filter:blur(8px);">
+                    <h1>⚠️ Warning</h1>
+                    <p>Developer tools detected. Please close them for optimal experience.</p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px;padding:10px 20px;background:#00E5FF;color:#0B0F1A;border:none;border-radius:8px;cursor:pointer;">Continue Anyway</button>
+                </div>
+            `;
+            document.body.appendChild(warningDiv);
+        }
         
-        // 4. DISABLE DEBUGGER STATEMENTS
-        function disableDebugger() {
-            const noop = function() {};
-            try {
-                (function() {
-                    const _console = console;
-                    const _log = _console.log;
-                    const _info = _console.info;
-                    const _warn = _console.warn;
-                    const _error = _console.error;
-                    const _debug = _console.debug;
-                    
-                    Object.defineProperty(console, 'log', { get: function() { return noop; } });
-                    Object.defineProperty(console, 'info', { get: function() { return noop; } });
-                    Object.defineProperty(console, 'warn', { get: function() { return noop; } });
-                    Object.defineProperty(console, 'error', { get: function() { return noop; } });
-                    Object.defineProperty(console, 'debug', { get: function() { return noop; } });
-                })();
-            } catch(e) {}
-        };
+        // Check less frequently on mobile (every 5 seconds instead of 2)
+        const checkInterval = isMobile ? 5000 : 2000;
+        setInterval(checkDevTools, checkInterval);
         
-        // Try to prevent debugger
-        setInterval(function() {
-            try {
-                (function() {
-                    const start = new Date();
-                    debugger;
-                    const end = new Date();
-                    if (end - start > 100) {
-                        document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0B0F1A;color:#00E5FF;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99999;font-family:monospace;"><h1>🚫 Access Denied</h1><p>Debugging is not allowed.</p></div>';
-                    }
-                })();
-            } catch(e) {}
-        }, 1000);
-        
-        // 5. PREVENT SELECTION AND COPYING (Optional - adds another layer)
+        // 4. PREVENT SELECTION AND COPYING (Except on form inputs)
         document.addEventListener('selectstart', function(e) {
             if (!e.target.closest('.contact-form, .modal-content, input, textarea')) {
                 e.preventDefault();
@@ -1148,28 +1119,15 @@
             }
         });
         
-        // 6. DETECT IF SOURCE CODE IS BEING VIEWED
-        function detectSourceView() {
-            const sourceCheck = new Error().stack;
-            if (sourceCheck && sourceCheck.includes('debugger')) {
-                window.location.reload();
-            }
-        }
-        
-        // Initialize protection
-        disableDebugger();
-        detectSourceView();
-        
-        // 7. OVERRIDE DEVTOOLS OPEN DETECTION (window.resize)
-        window.addEventListener('resize', function() {
-            const widthDiff = window.outerWidth - window.innerWidth;
-            const heightDiff = window.outerHeight - window.innerHeight;
-            if (widthDiff > 100 || heightDiff > 100) {
-                document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0B0F1A;color:#00E5FF;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99999;font-family:monospace;"><h1>🚫 Access Denied</h1><p>Developer tools detected.</p></div>';
+        // 5. Prevent copy on non-form elements
+        document.addEventListener('copy', function(e) {
+            if (!e.target.closest('.contact-form, .modal-content, input, textarea')) {
+                e.preventDefault();
+                return false;
             }
         });
         
-        console.log('%c🔒 Developer tools protection enabled', 'color: #00E5FF; font-size: 14px;');
+        console.log('%c🔒 Protection enabled (Mobile-friendly)', 'color: #00E5FF; font-size: 14px;');
     })();
 </script>
 
