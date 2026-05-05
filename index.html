@@ -1401,79 +1401,128 @@
       let autoScrollInterval;
       let isPaused = false;
       
-      async function loadInsights() {
-        const grid = document.getElementById('insightsGrid');
+async function loadInsights() {
+    const grid = document.getElementById('insightsGrid');
+    
+    const icons = {
+        'Prototype': 'fa-microchip',
+        'IoT': 'fa-cloud',
+        'PCB Design': 'fa-pcb',
+        'Firmware': 'fa-microcontroller',
+        'Embedded': 'fa-microchip',
+        'Web Dev': 'fa-code',
+        'AI/ML': 'fa-brain'
+    };
+    
+    try {
+        const response = await fetch('insights.csv');
+        const csvText = await response.text();
         
-        const icons = {
-          'PCB Design': 'fa-pcb',
-          'Firmware': 'fa-microcontroller',
-          'IoT Edge': 'fa-cloud',
-          'Embedded': 'fa-microchip',
-          'Web Dev': 'fa-code',
-          'AI/ML': 'fa-brain'
-        };
+        // Better CSV parsing that handles quoted fields
+        const rows = [];
+        let row = [];
+        let field = '';
+        let inQuotes = false;
         
-        try {
-          const response = await fetch('insights.csv');
-          const csvText = await response.text();
-          
-          const rows = [];
-          let current = '';
-          let inQuotes = false;
-          
-          for (let char of csvText) {
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+            const nextChar = csvText[i + 1];
+            
             if (char === '"') {
-              inQuotes = !inQuotes;
-            } else if (char === '\n' && !inQuotes) {
-              rows.push(current);
-              current = '';
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                row.push(field);
+                field = '';
+            } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
+                row.push(field);
+                if (row.length > 0 && row.some(cell => cell.trim())) {
+                    rows.push(row);
+                }
+                row = [];
+                field = '';
+                if (char === '\r') i++; // skip \n after \r
             } else {
-              current += char;
+                field += char;
             }
-          }
-          if (current) rows.push(current);
-          
-          const dataRows = rows.slice(1).filter(row => row.trim());
-          
-          // Duplicate for infinite scroll effect
-          const allRows = [...dataRows, ...dataRows];
-          
-          grid.innerHTML = allRows.map(row => {
-            const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-            const [title, description, image, category] = cols;
+        }
+        // Push last field if exists
+        if (field || row.length) {
+            row.push(field);
+            if (row.length > 0 && row.some(cell => cell.trim())) {
+                rows.push(row);
+            }
+        }
+        
+        if (rows.length < 2) {
+            throw new Error('No data rows found');
+        }
+        
+        // First row is header
+        const headers = rows[0];
+        const dataRows = rows.slice(1);
+        
+        // Duplicate for infinite scroll effect
+        const allRows = [...dataRows, ...dataRows];
+        
+        grid.innerHTML = allRows.map(rowData => {
+            // Map columns by header position
+            const titleIndex = headers.findIndex(h => h.toLowerCase() === 'title');
+            const descIndex = headers.findIndex(h => h.toLowerCase() === 'description');
+            const imageIndex = headers.findIndex(h => h.toLowerCase() === 'image');
+            const catIndex = headers.findIndex(h => h.toLowerCase() === 'category');
+            
+            const title = rowData[titleIndex] || 'Untitled';
+            const description = rowData[descIndex] || '';
+            const image = rowData[imageIndex] || '';
+            const category = rowData[catIndex] || 'Tech';
+            
             const icon = icons[category] || 'fa-code';
             
             return `
-              <div class="blog-card" data-title="${title || 'Untitled'}" data-description="${description || ''}" data-image="${image || ''}" data-category="${category || 'Tech'}" data-icon="${icon}" onclick="openArticleModal(this)">
-                <div class="blog-img" style="background-image: url('${image || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}');"></div>
-                <div class="blog-content">
-                  <div class="blog-category"><i class="fas ${icon}"></i> ${category || 'Tech'}</div>
-                  <h4>${title || 'Untitled'}</h4>
-                  <p>${(description || '').substring(0, 80)}...</p>
-                  <span class="read-more" style="cursor:pointer;">Read more <i class="fas fa-arrow-right"></i></span>
+                <div class="blog-card" data-title="${escapeHtml(title)}" data-description="${escapeHtml(description)}" data-image="${image || ''}" data-category="${escapeHtml(category)}" data-icon="${icon}" onclick="openArticleModal(this)">
+                    <div class="blog-img" style="background-image: url('${image || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}'); background-size: cover; background-position: center;"></div>
+                    <div class="blog-content">
+                        <div class="blog-category"><i class="fas ${icon}"></i> ${escapeHtml(category)}</div>
+                        <h4>${escapeHtml(title)}</h4>
+                        <p>${escapeHtml(description).substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
+                        <span class="read-more" style="cursor:pointer;">Read more <i class="fas fa-arrow-right"></i></span>
+                    </div>
                 </div>
-              </div>
             `;
-          }).join('');
-          
-          // Start auto-scroll
-          startAutoScroll(grid);
-          setupCarouselControls(grid);
-          
-        } catch (error) {
-          grid.innerHTML = `
-            <div class="blog-card">
-              <div class="blog-img" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg');"></div>
-              <div class="blog-content">
-                <div class="blog-category"><i class="fas fa-cloud"></i> Getting Started</div>
-                <h4>Create your insights.csv file</h4>
-                <p>Place a CSV file with columns: title, description, image, category in the same folder.</p>
-                <a href="#" class="read-more">Learn how <i class="fas fa-arrow-right"></i></a>
-              </div>
-            </div>
-          `;
+        }).join('');
+        
+        // Start auto-scroll after loading
+        if (grid.children.length > 0) {
+            startAutoScroll(grid);
+            setupCarouselControls(grid);
         }
-      }
+        
+    } catch (error) {
+        console.error('Error loading insights:', error);
+        grid.innerHTML = `
+            <div class="blog-card">
+                <div class="blog-img" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'); background-size: cover;"></div>
+                <div class="blog-content">
+                    <div class="blog-category"><i class="fas fa-cloud"></i> Getting Started</div>
+                    <h4>Create your insights.csv file</h4>
+                    <p>Place a CSV file with columns: title, description, image, category in the same folder. Make sure to wrap multi-line descriptions in quotes.</p>
+                    <span class="read-more">Learn how <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Helper function to escape HTML to prevent XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
       
       function startAutoScroll(grid) {
         let scrollSpeed = 2;
