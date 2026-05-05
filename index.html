@@ -683,6 +683,62 @@
       padding: 0 1rem;
     }
 
+    /* Image Gallery Styles */
+    .image-gallery {
+        margin: 1rem 0;
+    }
+    
+    .gallery-main img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    
+    .gallery-main img:hover {
+        transform: scale(1.02);
+    }
+    
+    .gallery-thumbnails {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        scrollbar-width: thin;
+    }
+    
+    .gallery-thumbnails img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    
+    .gallery-thumbnails img:hover {
+        border-color: var(--electric-cyan);
+        transform: scale(1.05);
+    }
+    
+    .gallery-thumbnails::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .gallery-thumbnails::-webkit-scrollbar-track {
+        background: #1A2132;
+        border-radius: 4px;
+    }
+    
+    .gallery-thumbnails::-webkit-scrollbar-thumb {
+        background: var(--electric-cyan);
+        border-radius: 4px;
+    }
+
     /* ========== RESPONSIVE BREAKPOINTS ========== */
     @media (max-width: 1024px) {
       .services-grid {
@@ -1400,118 +1456,235 @@
       // ---------- INSIGHTS CAROUSEL LOADER ----------
       let autoScrollInterval;
       let isPaused = false;
+      let insightsData = [];
       
-async function loadInsights() {
-    const grid = document.getElementById('insightsGrid');
+      async function loadInsights() {
+          const grid = document.getElementById('insightsGrid');
+          
+          const icons = {
+              'Prototype': 'fa-microchip',
+              'IoT': 'fa-cloud',
+              'PCB Design': 'fa-pcb',
+              'Firmware': 'fa-microcontroller',
+              'Embedded': 'fa-microchip',
+              'Web Dev': 'fa-code',
+              'AI/ML': 'fa-brain'
+          };
+          
+          try {
+              const response = await fetch('insights.csv');
+              const csvText = await response.text();
+              
+              // Better CSV parsing that handles quoted fields
+              const rows = [];
+              let row = [];
+              let field = '';
+              let inQuotes = false;
+              
+              for (let i = 0; i < csvText.length; i++) {
+                  const char = csvText[i];
+                  const nextChar = csvText[i + 1];
+                  
+                  if (char === '"') {
+                      inQuotes = !inQuotes;
+                  } else if (char === ',' && !inQuotes) {
+                      row.push(field);
+                      field = '';
+                  } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
+                      row.push(field);
+                      if (row.length > 0 && row.some(cell => cell.trim())) {
+                          rows.push(row);
+                      }
+                      row = [];
+                      field = '';
+                      if (char === '\r') i++;
+                  } else {
+                      field += char;
+                  }
+              }
+              if (field || row.length) {
+                  row.push(field);
+                  if (row.length > 0 && row.some(cell => cell.trim())) {
+                      rows.push(row);
+                  }
+              }
+              
+              if (rows.length < 2) {
+                  throw new Error('No data rows found');
+              }
+              
+              const headers = rows[0];
+              const dataRows = rows.slice(1);
+              
+              // Store insights data globally
+              insightsData = [];
+              
+              // Find column indices
+              const titleIndex = headers.findIndex(h => h.toLowerCase() === 'title');
+              const descIndex = headers.findIndex(h => h.toLowerCase() === 'description');
+              const catIndex = headers.findIndex(h => h.toLowerCase() === 'category');
+              
+              // Find all image columns (image, image1, image2, etc.)
+              const imageIndices = [];
+              for (let i = 0; i < headers.length; i++) {
+                  if (headers[i].toLowerCase().startsWith('image')) {
+                      imageIndices.push(i);
+                  }
+              }
+              
+              // Duplicate for infinite scroll effect
+              const allRows = [...dataRows, ...dataRows];
+              
+              // Store each insight's data
+              allRows.forEach((rowData, idx) => {
+                  const title = rowData[titleIndex] || 'Untitled';
+                  const description = rowData[descIndex] || '';
+                  const category = rowData[catIndex] || 'Tech';
+                  
+                  // Collect all images
+                  const images = [];
+                  imageIndices.forEach(imgIdx => {
+                      if (rowData[imgIdx] && rowData[imgIdx].trim()) {
+                          images.push(rowData[imgIdx]);
+                      }
+                  });
+                  
+                  // Store for modal use
+                  insightsData.push({
+                      title: title,
+                      description: description,
+                      images: images,
+                      category: category,
+                      icon: icons[category] || 'fa-code'
+                  });
+              });
+              
+              grid.innerHTML = allRows.map((rowData, idx) => {
+                  const title = rowData[titleIndex] || 'Untitled';
+                  const description = rowData[descIndex] || '';
+                  const category = rowData[catIndex] || 'Tech';
+                  const mainImage = imageIndices.length > 0 ? (rowData[imageIndices[0]] || '') : '';
+                  const icon = icons[category] || 'fa-code';
+                  
+                  return `
+                      <div class="blog-card" data-index="${idx}" onclick="openArticleModalWithGallery(${idx})">
+                          <div class="blog-img" style="background-image: url('${mainImage || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}'); background-size: cover; background-position: center;"></div>
+                          <div class="blog-content">
+                              <div class="blog-category"><i class="fas ${icon}"></i> ${escapeHtml(category)}</div>
+                              <h4>${escapeHtml(title)}</h4>
+                              <p>${escapeHtml(description).substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
+                              <span class="read-more" style="cursor:pointer;">Read more <i class="fas fa-arrow-right"></i></span>
+                          </div>
+                      </div>
+                  `;
+              }).join('');
+              
+              if (grid.children.length > 0) {
+                  startAutoScroll(grid);
+                  setupCarouselControls(grid);
+              }
+              
+          } catch (error) {
+              console.error('Error loading insights:', error);
+              grid.innerHTML = `
+                  <div class="blog-card">
+                      <div class="blog-img" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'); background-size: cover;"></div>
+                      <div class="blog-content">
+                          <div class="blog-category"><i class="fas fa-cloud"></i> Getting Started</div>
+                          <h4>Create your insights.csv file</h4>
+                          <p>Place a CSV file with columns: title, description, image, image1, image2, category in the same folder.</p>
+                          <span class="read-more">Learn how <i class="fas fa-arrow-right"></i></span>
+                      </div>
+                  </div>
+              `;
+          }
+      }
+
+// New function to open modal with image gallery
+window.openArticleModalWithGallery = function(index) {
+    const insight = insightsData[index];
+    if (!insight) return;
     
-    const icons = {
-        'Prototype': 'fa-microchip',
-        'IoT': 'fa-cloud',
-        'PCB Design': 'fa-pcb',
-        'Firmware': 'fa-microcontroller',
-        'Embedded': 'fa-microchip',
-        'Web Dev': 'fa-code',
-        'AI/ML': 'fa-brain'
-    };
-    
-    try {
-        const response = await fetch('insights.csv');
-        const csvText = await response.text();
-        
-        // Better CSV parsing that handles quoted fields
-        const rows = [];
-        let row = [];
-        let field = '';
-        let inQuotes = false;
-        
-        for (let i = 0; i < csvText.length; i++) {
-            const char = csvText[i];
-            const nextChar = csvText[i + 1];
-            
-            if (char === '"') {
-                inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-                row.push(field);
-                field = '';
-            } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
-                row.push(field);
-                if (row.length > 0 && row.some(cell => cell.trim())) {
-                    rows.push(row);
-                }
-                row = [];
-                field = '';
-                if (char === '\r') i++; // skip \n after \r
-            } else {
-                field += char;
-            }
-        }
-        // Push last field if exists
-        if (field || row.length) {
-            row.push(field);
-            if (row.length > 0 && row.some(cell => cell.trim())) {
-                rows.push(row);
-            }
-        }
-        
-        if (rows.length < 2) {
-            throw new Error('No data rows found');
-        }
-        
-        // First row is header
-        const headers = rows[0];
-        const dataRows = rows.slice(1);
-        
-        // Duplicate for infinite scroll effect
-        const allRows = [...dataRows, ...dataRows];
-        
-        grid.innerHTML = allRows.map(rowData => {
-            // Map columns by header position
-            const titleIndex = headers.findIndex(h => h.toLowerCase() === 'title');
-            const descIndex = headers.findIndex(h => h.toLowerCase() === 'description');
-            const imageIndex = headers.findIndex(h => h.toLowerCase() === 'image');
-            const catIndex = headers.findIndex(h => h.toLowerCase() === 'category');
-            
-            const title = rowData[titleIndex] || 'Untitled';
-            const description = rowData[descIndex] || '';
-            const image = rowData[imageIndex] || '';
-            const category = rowData[catIndex] || 'Tech';
-            
-            const icon = icons[category] || 'fa-code';
-            
-            return `
-                <div class="blog-card" data-title="${escapeHtml(title)}" data-description="${escapeHtml(description)}" data-image="${image || ''}" data-category="${escapeHtml(category)}" data-icon="${icon}" onclick="openArticleModal(this)">
-                    <div class="blog-img" style="background-image: url('${image || 'https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'}'); background-size: cover; background-position: center;"></div>
-                    <div class="blog-content">
-                        <div class="blog-category"><i class="fas ${icon}"></i> ${escapeHtml(category)}</div>
-                        <h4>${escapeHtml(title)}</h4>
-                        <p>${escapeHtml(description).substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
-                        <span class="read-more" style="cursor:pointer;">Read more <i class="fas fa-arrow-right"></i></span>
-                    </div>
+    // Create gallery HTML
+    let galleryHTML = '';
+    if (insight.images && insight.images.length > 0) {
+        galleryHTML = `
+            <div class="image-gallery" style="margin: 1rem 0;">
+                <div class="gallery-main" style="margin-bottom: 1rem;">
+                    <img src="${insight.images[0]}" alt="${escapeHtml(insight.title)}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 16px; cursor: pointer;" onclick="openFullImage('${insight.images[0]}')">
                 </div>
-            `;
-        }).join('');
-        
-        // Start auto-scroll after loading
-        if (grid.children.length > 0) {
-            startAutoScroll(grid);
-            setupCarouselControls(grid);
-        }
-        
-    } catch (error) {
-        console.error('Error loading insights:', error);
-        grid.innerHTML = `
-            <div class="blog-card">
-                <div class="blog-img" style="background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'); background-size: cover;"></div>
-                <div class="blog-content">
-                    <div class="blog-category"><i class="fas fa-cloud"></i> Getting Started</div>
-                    <h4>Create your insights.csv file</h4>
-                    <p>Place a CSV file with columns: title, description, image, category in the same folder. Make sure to wrap multi-line descriptions in quotes.</p>
-                    <span class="read-more">Learn how <i class="fas fa-arrow-right"></i></span>
+                <div class="gallery-thumbnails" style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                    ${insight.images.map(img => `
+                        <img src="${img}" alt="Thumbnail" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;" onclick="changeGalleryImage(this, '${img}')" onmouseover="this.style.borderColor='#00E5FF'" onmouseout="this.style.borderColor='transparent'">
+                    `).join('')}
                 </div>
             </div>
         `;
+    } else {
+        galleryHTML = `<div class="blog-img" style="height: 250px; background-image: url('https://images.pexels.com/photos/3862635/pexels-photo-3862635.jpeg'); background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 1rem;"></div>`;
     }
-}
+    
+    document.getElementById('articleCategory').innerHTML = `<i class="fas ${insight.icon}"></i> ${escapeHtml(insight.category)}`;
+    document.getElementById('articleTitle').textContent = insight.title;
+    document.getElementById('articleFullText').innerHTML = escapeHtml(insight.description).replace(/\n/g, '<br>');
+    
+    // Replace the image section with gallery
+    const articleImageDiv = document.getElementById('articleImage');
+    if (articleImageDiv) {
+        articleImageDiv.innerHTML = galleryHTML;
+        articleImageDiv.style.backgroundImage = 'none';
+        articleImageDiv.style.height = 'auto';
+        articleImageDiv.style.backgroundColor = 'transparent';
+    }
+    
+    document.getElementById('articleModal').style.display = 'flex';
+    body.classList.add('no-scroll');
+};
+
+// Function to change gallery main image when clicking thumbnails
+window.changeGalleryImage = function(thumbnailElement, imageUrl) {
+    const galleryMain = document.querySelector('#articleImage .gallery-main img');
+    if (galleryMain) {
+        galleryMain.src = imageUrl;
+    }
+};
+
+// Function to open full-size image in new tab or lightbox
+window.openFullImage = function(imageUrl) {
+    window.open(imageUrl, '_blank');
+};
+
+// Update close modal function to reset gallery
+const originalCloseModal = function() {
+    document.getElementById('articleModal').style.display = 'none';
+    body.classList.remove('no-scroll');
+    // Reset the article image div for next time
+    const articleImageDiv = document.getElementById('articleImage');
+    if (articleImageDiv) {
+        articleImageDiv.innerHTML = '';
+        articleImageDiv.style.backgroundImage = '';
+        articleImageDiv.style.height = '200px';
+    }
+};
+
+// Replace close event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const closeArticleModal = document.getElementById('closeArticleModal');
+    const closeArticleBtn = document.getElementById('closeArticleBtn');
+    
+    if (closeArticleModal) {
+        closeArticleModal.onclick = originalCloseModal;
+    }
+    if (closeArticleBtn) {
+        closeArticleBtn.onclick = originalCloseModal;
+    }
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('articleModal')) {
+            originalCloseModal();
+        }
+    });
+});
 
 // Helper function to escape HTML to prevent XSS
 function escapeHtml(str) {
